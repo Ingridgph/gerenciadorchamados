@@ -7,7 +7,7 @@ use App\Enums\ChamadoStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class ChamadoRequest extends FormRequest
+class ChamadoCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

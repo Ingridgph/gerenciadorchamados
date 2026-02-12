@@ -2,22 +2,21 @@
 
 namespace App\Services;
 
-use App\Models\Chamado;
-use App\Http\Requests\ChamadoRequest;
-use App\Http\Requests\ListQueryRequest;
+use App\Http\Requests\ChamadoCreateRequest;
+use App\Http\Requests\ChamadoUpdateStatusRequest;
+use App\Http\Requests\ListChamadoRequest;
 use App\Http\Resources\ChamadoResource;
+use App\Models\Chamado;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ChamadoService
 {
-    public function list(ListQueryRequest $request): AnonymousResourceCollection
+    public function list(ListChamadoRequest $request): AnonymousResourceCollection
     {
         $chamados = Chamado::query()
-            ->when($request->status, fn ($q, $status) =>
-                $q->where('status', $status)
+            ->when($request->status, fn ($q, $status) => $q->where('status', $status)
             )
-            ->when($request->prioridade, fn ($q, $prioridade) =>
-                $q->where('prioridade', $prioridade)
+            ->when($request->prioridade, fn ($q, $prioridade) => $q->where('prioridade', $prioridade)
             )
             ->paginate(10);
 
@@ -31,14 +30,14 @@ class ChamadoService
         return ChamadoResource::make($chamado);
     }
 
-    public function create(ChamadoRequest $request): ChamadoResource
+    public function create(ChamadoCreateRequest $request): ChamadoResource
     {
         $chamado = Chamado::create($request->validated());
 
         return ChamadoResource::make($chamado);
     }
 
-    public function update(ChamadoRequest $request, string $id): ChamadoResource
+    public function updateStatus(ChamadoUpdateStatusRequest $request, string $id): ChamadoResource
     {
         $chamado = Chamado::findOrFail($id);
         $chamado->update($request->validated());

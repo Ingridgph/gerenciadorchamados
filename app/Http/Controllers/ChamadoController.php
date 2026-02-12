@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ChamadoService;
-use App\Http\Requests\ChamadoRequest;
+use App\Http\Requests\ChamadoCreateRequest;
+use App\Http\Requests\ChamadoUpdateStatusRequest;
 use App\Http\Requests\ListChamadoRequest;
+use App\Services\ChamadoService;
 
 class ChamadoController extends Controller
 {
@@ -22,12 +23,12 @@ class ChamadoController extends Controller
         return $this->chamadoService->findById($id);
     }
 
-    public function store(ChamadoRequest $request)
+    public function store(ChamadoCreateRequest $request)
     {
         return $this->chamadoService->create($request);
     }
 
-    public function update(ChamadoRequest $request, string $id)
+    public function update(ChamadoUpdateStatusRequest $request, string $id)
     {
         return $this->chamadoService->update($request, $id);
     }
