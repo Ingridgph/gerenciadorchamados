@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ChamadoPrioridadeEnum;
+use App\Enums\ChamadoStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Enums\ChamadoStatusEnum;
-use App\Enums\ChamadoPrioridadeEnum;
 
 class ListChamadoRequest extends FormRequest
 {
@@ -19,12 +19,12 @@ class ListChamadoRequest extends FormRequest
         return [
             'status' => [
                 'nullable',
-                Rule::in(array_column(ChamadoStatusEnum::cases(), 'value'))
+                Rule::in(array_column(ChamadoStatusEnum::cases(), 'value')),
             ],
 
             'prioridade' => [
                 'nullable',
-                Rule::in(array_column(ChamadoPrioridadeEnum::cases(), 'value'))
+                Rule::in(array_column(ChamadoPrioridadeEnum::cases(), 'value')),
             ],
         ];
     }

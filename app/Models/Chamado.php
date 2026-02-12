@@ -8,36 +8,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chamado extends Model
-{use SoftDeletes;
+{
+    use SoftDeletes;
 
     protected $table = 'chamado';
-     protected $fillable = [
+
+    protected $fillable = [
         'titulo',
         'descricao',
         'status',
         'prioridade',
         'solicitante_id',
         'responsavel_id',
-        'resolved_at'
+        'resolved_at',
     ];
 
-      protected function casts(): array
+    protected function casts(): array
     {
         return [
             'resolved_at' => 'datetime',
             'prioridade' => ChamadoPrioridadeEnum::class,
-             'status' => ChamadoStatusEnum::class,
+            'status' => ChamadoStatusEnum::class,
         ];
     }
 
-public function solicitante()
-{
-    return $this->belongsTo(User::class, 'solicitante_id');
-}
+    public function solicitante()
+    {
+        return $this->belongsTo(User::class, 'solicitante_id');
+    }
 
-public function responsavel()
-{
-    return $this->belongsTo(User::class, 'responsavel_id');
-}
-
+    public function responsavel()
+    {
+        return $this->belongsTo(User::class, 'responsavel_id');
+    }
 }

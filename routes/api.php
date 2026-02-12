@@ -10,7 +10,7 @@ Route::post('/login-token', [AuthenticatedSessionController::class, 'store']);
 
 // 2. Rotas PROTEGIDAS (Só passa com o Bearer Token no Header)
 Route::middleware(['auth:sanctum'])->group(function () {
-    
+
     // Ver dados do usuário logado
     Route::get('/user', function (Request $request) {
         return $request->user();

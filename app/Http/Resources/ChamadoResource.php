@@ -14,7 +14,7 @@ class ChamadoResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-      return [
+        return [
             'id' => $this->id,
 
             'titulo' => $this->titulo,

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ChamadoStatusEnum:string
+enum ChamadoStatusEnum: string
 {
     case ABERTO = 'aberto';
     case EM_ANDAMENTO = 'em_andamento';

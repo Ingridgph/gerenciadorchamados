@@ -24,30 +24,30 @@ class ChamadoCreateRequest extends FormRequest
      */
     public function rules(): array
     {
-             return [
+        return [
             'titulo' => ['required', 'string', 'min:5', 'max:120'],
             'descricao' => ['required', 'string', 'min:20'],
 
             'status' => [
                 'required',
-                new Enum(ChamadoStatusEnum::class)
+                new Enum(ChamadoStatusEnum::class),
             ],
 
             'prioridade' => [
                 'required',
-                new Enum(ChamadoPrioridadeEnum::class)
+                new Enum(ChamadoPrioridadeEnum::class),
             ],
 
             'solicitante_id' => [
                 'required',
                 'integer',
-                'exists:users,id'
+                'exists:users,id',
             ],
 
             'responsavel_id' => [
                 'nullable',
                 'integer',
-                'exists:users,id'
+                'exists:users,id',
             ],
         ];
     }
