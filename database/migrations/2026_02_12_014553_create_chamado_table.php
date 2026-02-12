@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('chamado', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+           $table->id();
 
             $table->string('titulo', 120);
             $table->text('descricao');
@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('status');
             $table->string('prioridade');
 
-            $table->foreignUuid('solicitante_id')
+            $table->foreignId('solicitante_id')
                 ->constrained('users');
 
-            $table->foreignUuid('responsavel_id')
+            $table->foreignId('responsavel_id')
                 ->nullable()
                 ->constrained('users');
 

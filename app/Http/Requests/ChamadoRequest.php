@@ -40,13 +40,13 @@ class ChamadoRequest extends FormRequest
 
             'solicitante_id' => [
                 'required',
-                'uuid',
+                'integer',
                 'exists:users,id'
             ],
 
             'responsavel_id' => [
                 'nullable',
-                'uuid',
+                'integer',
                 'exists:users,id'
             ],
         ];
