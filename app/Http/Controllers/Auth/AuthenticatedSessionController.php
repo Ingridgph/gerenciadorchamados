@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthenticatedSessionController extends Controller
@@ -16,13 +14,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): JsonResponse
     {
-       $request->authenticate();
+        $request->authenticate();
 
-    $token = $request->user()->createToken('api-token')->plainTextToken;
+        $token = $request->user()->createToken('api-token')->plainTextToken;
 
-    return response()->json([
-        'token' => $token, 
-    ]);
+        return response()->json([
+            'token' => $token,
+        ]);
     }
 
     /**
@@ -30,10 +28,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): JsonResponse
     {
-         $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Token deletado com sucesso. Logout realizado.'
+            'message' => 'Token deletado com sucesso. Logout realizado.',
         ]);
     }
 }
