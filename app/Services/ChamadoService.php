@@ -8,6 +8,7 @@ use App\Http\Requests\ListChamadoRequest;
 use App\Http\Resources\ChamadoResource;
 use App\Models\Chamado;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class ChamadoService
 {
@@ -48,6 +49,9 @@ class ChamadoService
     public function delete(string $id): void
     {
         $chamado = Chamado::findOrFail($id);
+
+        Gate::authorize('delete', $chamado);
+
         $chamado->delete();
     }
 }
