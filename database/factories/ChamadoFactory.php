@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\ChamadoPrioridadeEnum;
 use App\Enums\ChamadoStatusEnum;
 use App\Models\Chamado;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ChamadoFactory extends Factory
@@ -26,7 +27,7 @@ class ChamadoFactory extends Factory
             'descricao' => $this->faker->paragraph(),
             'status' => $status,
             'prioridade' => $prioridade,
-            'solicitante_id' => 1,
+            'solicitante_id' => User::factory()->create()->id,
         ];
     }
 }

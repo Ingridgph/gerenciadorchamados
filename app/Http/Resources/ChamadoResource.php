@@ -39,6 +39,7 @@ class ChamadoResource extends JsonResource
                     'email' => $this->responsavel->email,
                 ]
             ),
+            'latest_log' => ChamadoLogResource::make($this->whenLoaded('latestLog')),
 
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
