@@ -27,10 +27,10 @@ class ListChamadoRequest extends FormRequest
                 Rule::in(array_column(ChamadoPrioridadeEnum::cases(), 'value')),
             ],
             'search' => [
-            'nullable',
-            'string',
-            'max:255',
-        ]
+                'nullable',
+                'string',
+                'max:255',
+            ],
         ];
     }
 }

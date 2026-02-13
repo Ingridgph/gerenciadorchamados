@@ -8,7 +8,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
@@ -27,12 +26,12 @@ class RegisteredUserController extends Controller
             'admin' => ['nullable', 'bool'],
         ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => $request->password, // Laravel já faz hash
-        'admin' => $request->boolean('admin'), // agora correto
-    ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+            'admin' => $request->boolean('admin'),
+        ]);
 
         event(new Registered($user));
 
