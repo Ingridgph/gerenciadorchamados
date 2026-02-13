@@ -13,14 +13,16 @@ test('não deve permitir acessar tickets sem autenticação', function () {
 
 test('Deve permitir acessar tickets com autenticação', function () {
     $this->authenticated();
-    $chamado = Chamado::factory()->create();
+    $chamado = Chamado::factory()->create([
+        'status' => 'aberto',
+    ]);
     $data = [
         'status' => 'resolvido',
     ];
     $response = $this->patchJson("/api/tickets/$chamado->id", $data);
     $response->assertStatus(200);
 
-$chamado->refresh();
+    $chamado->refresh();
     $this->assertEquals('resolvido', $chamado->status->value);
 
 });
