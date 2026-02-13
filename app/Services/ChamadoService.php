@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use App\Enums\ChamadoStatusEnum;
 use App\Http\Requests\ChamadoCreateRequest;
 use App\Http\Requests\ChamadoUpdateStatusRequest;
 use App\Http\Requests\ListChamadoRequest;
 use App\Http\Resources\ChamadoResource;
 use App\Models\Chamado;
+use App\Models\ChamadoLog;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ChamadoService
 {
@@ -40,7 +44,24 @@ class ChamadoService
     public function updateStatus(ChamadoUpdateStatusRequest $request, string $id): ChamadoResource
     {
         $chamado = Chamado::findOrFail($id);
-        $chamado->update($request->validated());
+
+        $statusAnterior = $chamado->status;
+        $novoStatus = $request->status;
+
+        $chamado->status = $novoStatus;
+
+        if ($novoStatus === ChamadoStatusEnum::RESOLVIDO->value) {
+            $chamado->resolved_at = now();
+        }
+
+        $chamado->save();
+
+        ChamadoLog::create([
+            'chamado_id' => $chamado->id,
+            'de' => $statusAnterior,
+            'para' => $novoStatus,
+            'user_id' => Auth::id(),
+        ]);
 
         return ChamadoResource::make($chamado);
     }
@@ -48,6 +69,9 @@ class ChamadoService
     public function delete(string $id): void
     {
         $chamado = Chamado::findOrFail($id);
+
+        Gate::authorize('delete', $chamado);
+
         $chamado->delete();
     }
 }

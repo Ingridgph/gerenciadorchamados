@@ -28,9 +28,9 @@ class ChamadoController extends Controller
         return $this->chamadoService->create($request);
     }
 
-    public function update(ChamadoUpdateStatusRequest $request, string $id)
+    public function updateStatus(ChamadoUpdateStatusRequest $request, string $id)
     {
-        return $this->chamadoService->update($request, $id);
+        return $this->chamadoService->updateStatus($request, $id);
     }
 
     public function destroy(string $id)
