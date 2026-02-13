@@ -1,59 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+#🐞 Teste Técnico Laravel – Gestão de Chamados
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicação simples de Gestão de Chamados (Tickets), focada em Back-end com autenticação, CRUD de chamados, logs de status e regras de negócio.
 
-## About Laravel
+##💻 Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Laravel 12+
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Banco de dados: SQLite
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Autenticação: Laravel Breeze
 
-## Learning Laravel
+Testes: Pest
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Opcional: Laravel Sanctum para API
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Docker disponível para rodar rapidamente
 
-## Laravel Sponsors
+##✨ Funcionalidades
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+🔑 Autenticação obrigatória
 
-### Premium Partners
+📄 CRUD completo de chamados
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+🔍 Filtros por status e prioridade
 
-## Contributing
+🔎 Busca por texto em título ou descrição
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+⚡ Atualização de status: resolved_at preenchido automaticamente e log de alteração
 
-## Code of Conduct
+🛡️ Apenas solicitante ou admin podem excluir chamados
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+##🧪 Usuários de Teste
 
-## Security Vulnerabilities
+Admin: admin@test.com
+ / Password123
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Comum: user@test.com
+ / Password123
 
-## License
+Chamados: 10 exemplos com status e prioridades variadas
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#🚀 Como rodar
+##🐳 Docker
+docker-compose up -d --build
+
+
+Acesse: http://localhost:8080
+
+##🔑 Endpoints da API
+Método	Rota	Descrição
+GET	/api/tickets	Lista tickets (com filtros)
+GET	/api/tickets/{id}	Detalha ticket
+POST	/api/tickets	Cria ticket
+PATCH	/api/tickets/{id}/status	Atualiza status e cria log
+DELETE	/api/tickets/{id}	Exclui ticket (soft delete)
+
+##🛡️ Regras de Negócio
+
+resolved_at preenchido automaticamente ao marcar RESOLVIDO
+
+Apenas solicitante ou admin podem deletar
+
+Logs registram toda mudança de status
+
+Filtros: status e prioridade
+
+Busca: título ou descrição
+
+##🧪 Testes
+
+✅ Usuário não autenticado não acessa tickets
+✅ PATCH de status cria log e preenche resolved_at
+
+##💖 Observações
+
+Todos os recursos usam API Resources
+
+Soft deletes ativados
+
+Código organizado com Requests, Resources, Policies e Services
+
+##
+# Build e sobe o container
+docker-compose up -d --build
+
+# Acessa o container
+docker exec -it <nome_do_container> bash
+
+# Cria o banco SQLite
+touch database/database.sqlite
+
+# Instala dependências PHP
+composer install
+
+# Roda migrations e seeders
+php artisan migrate --seed
+
+# Roda testes
+php artisan test
