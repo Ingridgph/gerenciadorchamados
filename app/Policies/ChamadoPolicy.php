@@ -15,8 +15,23 @@ class ChamadoPolicy
         //
     }
 
-    public function delete(User $user, Chamado $chamado)
+    public function view(User $user, Chamado $chamado): bool
     {
-        return (bool) $user->admin;
+        // Apenas solicitante, responsável ou admin podem visualizar
+        return $user->id === $chamado->solicitante_id ||
+               $user->id === $chamado->responsavel_id ||
+               $user->admin;
+    }
+
+    public function update(User $user, Chamado $chamado): bool
+    {
+        // Apenas solicitante ou admin podem editar
+        return $user->id === $chamado->solicitante_id || $user->admin;
+    }
+
+    public function delete(User $user, Chamado $chamado): bool
+    {
+        // Apenas solicitante ou admin podem deletar
+        return $user->id === $chamado->solicitante_id || $user->admin;
     }
 }

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Chamados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-5">
+
+    <h1>Autenticação</h1>
+
+    <div id="authSection">
+        <h3>Login</h3>
+        <form id="loginForm" class="mb-3">
+            <input type="email" id="emailLogin" placeholder="Email" class="form-control mb-2" required>
+            <input type="password" id="passwordLogin" placeholder="Senha" class="form-control mb-2" required>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+
+        <h3>Registrar</h3>
+        <form id="registerForm" class="mb-3">
+            <input type="text" id="nameRegister" placeholder="Nome" class="form-control mb-2" required>
+            <input type="email" id="emailRegister" placeholder="Email" class="form-control mb-2" required>
+            <input type="password" id="passwordRegister" placeholder="Senha" class="form-control mb-2" required>
+            <button type="submit" class="btn btn-success">Registrar</button>
+        </form>
+    </div>
+
+    <div id="userSection" style="display:none;">
+        <h3>Bem-vindo, <span id="userName"></span>!</h3>
+        <button id="logoutBtn" class="btn btn-warning mb-3">Logout</button>
+
+        <h3>Criar Chamado</h3>
+        <form id="ticketForm" class="mb-4">
+            <input type="text" id="titulo" placeholder="Título" class="form-control mb-2" required>
+            <textarea id="descricao" placeholder="Descrição" class="form-control mb-2" required></textarea>
+            <button type="submit" class="btn btn-success">Criar Chamado</button>
+        </form>
+
+        <h3>Chamados</h3>
+        <table class="table table-bordered" id="ticketsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const api = 'http://localhost:8080/api';
+        let token = '';
+        let user = {};
+
+        function showUserSection() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'block';
+            document.getElementById('userName').innerText = user.name;
+        }
+
+        function showAuthSection() {
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('userSection').style.display = 'none';
+            token = '';
+            user = {};
+        }
+
+        async function login(email, password) {
+            try {
+                console.log('Login attempt:', email);
+                const res = await fetch(`${api}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify({ email, password })
+                });
+                console.log('Login response status:', res.status);
+                const data = await res.json();
+                console.log('Login response data:', data);
+                if (data.token) {
+                    token = data.token;
+                    console.log('Token recebido:', token.slice(0, 20) + '...');
+                    await loadUser();
+                    showUserSection();
+                    loadTickets();
+                } else {
+                    console.error('Nenhum token na resposta');
+                    alert('Erro no login: ' + (data.message || 'Token não retornado'));
+                }
+            } catch (e) {
+                console.error('Erro no login:', e);
+                alert('Erro no login: ' + e.message);
+            }
+        }
+
+        async function register(name, email, password) {
+            try {
+                console.log('Register attempt:', email);
+                const res = await fetch(`${api}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify({ name, email, password, password_confirmation: password })
+                });
+                console.log('Register response status:', res.status);
+                const data = await res.json();
+                console.log('Register response:', data);
+                if (res.ok) {
+                    alert('Registrado com sucesso! Faça login.');
+                } else {
+                    alert('Erro no registro: ' + (data.message || JSON.stringify(data)));
+                }
+            } catch (e) {
+                console.error('Erro no registro:', e);
+                alert('Erro no registro: ' + e.message);
+            }
+        }
+
+        async function logout() {
+            try {
+                console.log('Logout...');
+                const res = await fetch(`${api}/auth/logout`, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                console.log('Logout response status:', res.status);
+                showAuthSection();
+            } catch (e) {
+                console.error('Erro no logout:', e);
+                alert('Erro no logout: ' + e.message);
+            }
+        }
+
+        async function loadUser() {
+            try {
+                console.log('Loading user with token:', token.slice(0, 20) + '...');
+                const res = await fetch(`${api}/user`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                console.log('User response status:', res.status);
+                if (!res.ok) {
+                    throw new Error(`Status ${res.status}`);
+                }
+                user = await res.json();
+                console.log('User loaded:', user);
+            } catch (e) {
+                console.error('Erro ao carregar usuário:', e);
+                alert('Erro ao carregar usuário: ' + e.message);
+            }
+        }
+
+        async function createTicket(titulo, descricao) {
+            try {
+                console.log('Creating ticket...');
+                const res = await fetch(`${api}/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ titulo, descricao })
+                });
+                console.log('Create ticket response status:', res.status);
+                if (res.ok) {
+                    alert('Chamado criado!');
+                    loadTickets();
+                } else {
+                    const err = await res.json();
+                    alert('Erro ao criar chamado: ' + (err.message || JSON.stringify(err)));
+                }
+            } catch (e) {
+                console.error('Erro ao criar chamado:', e);
+                alert('Erro ao criar chamado: ' + e.message);
+            }
+        }
+
+        async function loadTickets() {
+            try {
+                console.log('Loading tickets...');
+                const res = await fetch(`${api}/tickets`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                console.log('Load tickets response status:', res.status);
+                if (!res.ok) {
+                    throw new Error(`Status ${res.status}`);
+                }
+                const tickets = await res.json();
+                console.log('Tickets loaded:', tickets);
+                const tbody = document.querySelector('#ticketsTable tbody');
+                tbody.innerHTML = '';
+                tickets.forEach(t => {
+                    tbody.innerHTML += `<tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td>${t.descricao}</td>
+                <td>${t.status}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="updateStatus(${t.id})">Alterar Status</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteTicket(${t.id})">Deletar</button>
+                </td>
+            </tr>`;
+                });
+            } catch (e) {
+                console.error('Erro ao carregar chamados:', e);
+                alert('Erro ao carregar chamados: ' + e.message);
+            }
+        }
+
+        async function updateStatus(id) {
+            try {
+                // Array de status disponíveis
+                const statusOptions = ['aberto', 'em_andamento', 'resolvido'];
+                const novoStatus = prompt('Novo status (' + statusOptions.join(', ') + '):');
+                if (!novoStatus || !statusOptions.includes(novoStatus)) {
+                    alert('Status inválido');
+                    return;
+                }
+                console.log('Updating ticket', id, 'to status:', novoStatus);
+                const res = await fetch(`${api}/tickets/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ status: novoStatus })
+                });
+                console.log('Update status response:', res.status);
+                if (res.ok) {
+                    loadTickets();
+                } else {
+                    alert('Erro ao atualizar status');
+                }
+            } catch (e) {
+                console.error('Erro ao atualizar status:', e);
+                alert('Erro ao atualizar status: ' + e.message);
+            }
+        }
+
+        async function deleteTicket(id) {
+            try {
+                if (!confirm('Deletar este chamado?')) return;
+                console.log('Deleting ticket', id);
+                const res = await fetch(`${api}/tickets/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                console.log('Delete response:', res.status);
+                if (res.ok) {
+                    loadTickets();
+                } else {
+                    alert('Erro ao deletar chamado');
+                }
+            } catch (e) {
+                console.error('Erro ao deletar chamado:', e);
+                alert('Erro ao deletar chamado: ' + e.message);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loginForm').addEventListener('submit', e => {
+            e.preventDefault();
+            login(
+                document.getElementById('emailLogin').value,
+                document.getElementById('passwordLogin').value
+            );
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', e => {
+            e.preventDefault();
+            register(
+                document.getElementById('nameRegister').value,
+                document.getElementById('emailRegister').value,
+                document.getElementById('passwordRegister').value
+            );
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        document.getElementById('ticketForm').addEventListener('submit', e => {
+            e.preventDefault();
+            createTicket(
+                document.getElementById('titulo').value,
+                document.getElementById('descricao').value
+            );
+        });
+
+    </script>
+</body>
+
+</html>

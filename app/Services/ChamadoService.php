@@ -11,7 +11,6 @@ use App\Models\Chamado;
 use App\Models\ChamadoLog;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class ChamadoService
 {
@@ -42,9 +41,14 @@ class ChamadoService
         return ChamadoResource::make($chamado);
     }
 
-    public function create(ChamadoCreateRequest $request): ChamadoResource
+    /**
+     * Create chamado from validated array data.
+     *
+     * @param array $data
+     */
+    public function create(array $data): ChamadoResource
     {
-        $chamado = Chamado::create($request->validated());
+        $chamado = Chamado::create($data);
 
         return ChamadoResource::make($chamado);
     }
@@ -77,8 +81,6 @@ class ChamadoService
     public function delete(string $id): void
     {
         $chamado = Chamado::findOrFail($id);
-
-        Gate::authorize('delete', $chamado);
 
         $chamado->delete();
     }

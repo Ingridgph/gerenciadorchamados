@@ -29,17 +29,17 @@ class ChamadoCreateRequest extends FormRequest
             'descricao' => ['required', 'string', 'min:20'],
 
             'status' => [
-                'required',
+                'nullable',
                 new Enum(ChamadoStatusEnum::class),
             ],
 
             'prioridade' => [
-                'required',
+                'nullable',
                 new Enum(ChamadoPrioridadeEnum::class),
             ],
 
             'solicitante_id' => [
-                'required',
+                'nullable',
                 'integer',
                 'exists:users,id',
             ],

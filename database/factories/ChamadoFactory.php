@@ -14,20 +14,16 @@ class ChamadoFactory extends Factory
 
     public function definition(): array
     {
-        $status = $this->faker->randomElement([
-            ChamadoStatusEnum::ABERTO,
-            ChamadoStatusEnum::EM_ANDAMENTO,
-            ChamadoStatusEnum::RESOLVIDO,
-        ]);
-
-        $prioridade = $this->faker->randomElement([ChamadoPrioridadeEnum::BAIXA, ChamadoPrioridadeEnum::MEDIA, ChamadoPrioridadeEnum::ALTA]);
+        $status = $this->faker->randomElement(ChamadoStatusEnum::cases());
+        $prioridade = $this->faker->randomElement(ChamadoPrioridadeEnum::cases());
 
         return [
             'titulo' => $this->faker->sentence(3),
-            'descricao' => $this->faker->paragraph(),
+            'descricao' => $this->faker->paragraph(5),
             'status' => $status,
             'prioridade' => $prioridade,
-            'solicitante_id' => User::factory()->create()->id,
+            'solicitante_id' => User::factory(),
+            'responsavel_id' => null,
         ];
     }
 }
