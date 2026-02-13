@@ -16,7 +16,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/chamados', [ChamadoController::class, 'index']);
     Route::get('/chamados/{id}', [ChamadoController::class, 'show']);
     Route::post('/chamados', [ChamadoController::class, 'store']);
-    Route::put('/chamados/{id}', [ChamadoController::class, 'update']);
+    Route::patch('/chamados/{id}', [ChamadoController::class, 'updateStatus']);
     Route::delete('/chamados/{id}', [ChamadoController::class, 'destroy']);
 });
 
