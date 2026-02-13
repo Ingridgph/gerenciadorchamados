@@ -34,13 +34,14 @@ Este projeto é uma aplicação de **Gestão de Chamados (Tickets)** desenvolvid
 docker-compose up -d --build
 
 # Acessa o container da aplicação
-docker exec -it app bash
+docker exec -it gerenciadorchamados-app-1 bash
 
 # Configuração interna
 touch database/database.sqlite
 composer install
 php artisan migrate --seed
 php artisan test
+php artisan key:generate
 
 ## 🌐 URL de Acesso
 Acesse a aplicação em: [http://localhost:8080](http://localhost:8080)
@@ -49,13 +50,13 @@ Acesse a aplicação em: [http://localhost:8080](http://localhost:8080)
 
 ## 🔑 Endpoints da API
 
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | /api/tickets | Lista tickets com filtros |
-| `GET` | /api/tickets/{id} | Detalhes de um ticket |
-| `POST` | /api/tickets | Criação de novo chamado |
-| `PATCH` | /api/tickets/{id}/status | Atualiza status e gera log |
-| `DELETE` | /api/tickets/{id} | Exclusão (Soft Delete) |
+| Método   | Rota                     | Descrição                  |
+| :---     | :---                     | :---                       |
+| `GET`    | /api/tickets             | Lista tickets com filtros  |
+| `GET`    | /api/tickets/{id}        | Detalhes de um ticket      |
+| `POST`   | /api/tickets             | Criação de novo chamado    |
+| `PATCH`  | /api/tickets/{id}/status | Atualiza status e gera log |
+| `DELETE` | /api/tickets/{id}        | Exclusão (Soft Delete)     |
 
 ---
 
