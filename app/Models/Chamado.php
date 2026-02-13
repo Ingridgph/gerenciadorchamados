@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Enums\ChamadoPrioridadeEnum;
 use App\Enums\ChamadoStatusEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chamado extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\ChamadoFactory> */
+    use HasFactory,SoftDeletes;
 
     protected $table = 'chamado';
 
