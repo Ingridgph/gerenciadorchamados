@@ -1,100 +1,85 @@
-#🐞 Teste Técnico Laravel – Gestão de Chamados
+# 🐞 Teste Técnico Laravel – Gestão de Chamados
 
-Aplicação simples de Gestão de Chamados (Tickets), focada em Back-end com autenticação, CRUD de chamados, logs de status e regras de negócio.
+Este projeto é uma aplicação de **Gestão de Chamados (Tickets)** desenvolvida para avaliar competências em Laravel 12, arquitetura de software e boas práticas.
 
-##💻 Stack
+---
 
-Laravel 12+
+## 💻 Stack Tecnológica
 
-Banco de dados: SQLite
+*   **Framework:** Laravel 12+
+*   **Banco de Dados:** SQLite
+*   **Autenticação:** Laravel Breeze (Session) & Sanctum (API)
+*   **Testes:** Pest PHP
+*   **Container:** Docker (Docker Compose)
 
-Autenticação: Laravel Breeze
+---
 
-Testes: Pest
+## ✨ Funcionalidades
 
-Opcional: Laravel Sanctum para API
+*   🔑 **Autenticação:** Acesso restrito a usuários autenticados.
+*   📄 **CRUD de Chamados:** Gerenciamento completo de tickets.
+*   🔍 **Filtros e Busca:** Filtragem por status/prioridade e busca por texto.
+*   ⚡ **Status Inteligente:** Preenchimento automático de `resolved_at` e geração de logs.
+*   🛡️ **Segurança:** Regras de exclusão restritas ao solicitante ou administrador.
+*   📝 **Auditoria:** Histórico detalhado de alterações de status (`ticket_logs`).
 
-Docker disponível para rodar rapidamente
+---
 
-##✨ Funcionalidades
+## 🚀 Como Rodar o Projeto
 
-🔑 Autenticação obrigatória
+### 🐳 Via Docker (Recomendado)
 
-📄 CRUD completo de chamados
-
-🔍 Filtros por status e prioridade
-
-🔎 Busca por texto em título ou descrição
-
-⚡ Atualização de status: resolved_at preenchido automaticamente e log de alteração
-
-🛡️ Apenas solicitante ou admin podem excluir chamados
-
-##🧪 Usuários de Teste
-
-Admin: admin@test.com
- / Password123
-
-Comum: user@test.com
- / Password123
-
-Chamados: 10 exemplos com status e prioridades variadas
-
-#🚀 Como rodar
-##🐳 Docker
+```bash
+# Build e sobe os containers
 docker-compose up -d --build
 
+# Acessa o container da aplicação
+docker exec -it app bash
 
-Acesse: http://localhost:8080
-
-##🔑 Endpoints da API
-Método	Rota	Descrição
-GET	/api/tickets	Lista tickets (com filtros)
-GET	/api/tickets/{id}	Detalha ticket
-POST	/api/tickets	Cria ticket
-PATCH	/api/tickets/{id}/status	Atualiza status e cria log
-DELETE	/api/tickets/{id}	Exclui ticket (soft delete)
-
-##🛡️ Regras de Negócio
-
-resolved_at preenchido automaticamente ao marcar RESOLVIDO
-
-Apenas solicitante ou admin podem deletar
-
-Logs registram toda mudança de status
-
-Filtros: status e prioridade
-
-Busca: título ou descrição
-
-##🧪 Testes
-
-✅ Usuário não autenticado não acessa tickets
-✅ PATCH de status cria log e preenche resolved_at
-
-##💖 Observações
-
-Todos os recursos usam API Resources
-
-Soft deletes ativados
-
-Código organizado com Requests, Resources, Policies e Services
-
-##
-# Build e sobe o container
-docker-compose up -d --build
-
-# Acessa o container
-docker exec -it <nome_do_container> bash
-
-# Cria o banco SQLite
+# Configuração interna
 touch database/database.sqlite
-
-# Instala dependências PHP
 composer install
-
-# Roda migrations e seeders
 php artisan migrate --seed
-
-# Roda testes
 php artisan test
+
+## 🌐 URL de Acesso
+Acesse a aplicação em: [http://localhost:8080](http://localhost:8080)
+
+---
+
+## 🔑 Endpoints da API
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | /api/tickets | Lista tickets com filtros |
+| `GET` | /api/tickets/{id} | Detalhes de um ticket |
+| `POST` | /api/tickets | Criação de novo chamado |
+| `PATCH` | /api/tickets/{id}/status | Atualiza status e gera log |
+| `DELETE` | /api/tickets/{id} | Exclusão (Soft Delete) |
+
+---
+
+## 🛡️ Regras de Negócio
+
+*   ✅ **Fechamento:** Ao mudar status para `RESOLVIDO`, o campo `resolved_at` é preenchido na hora.
+*   ✅ **Auditoria:** Toda mudança de status (ex: `ABERTO` -> `EM_ANDAMENTO`) gera um registro de log.
+*   ✅ **Privacidade:** Um usuário comum não pode excluir chamados de terceiros.
+*   ✅ **Persistência:** Uso de Soft Deletes para evitar perda acidental de dados.
+
+---
+
+## 🧪 Usuários de Teste
+
+| Perfil    | E-mail         | Senha       |
+| :---      | :---           | :---        |
+| **Admin** | admin@test.com | Password123 |
+| **Comum** | user@test.com  | Password123 |
+
+---
+
+## 🧪 Testes Automatizados
+
+A aplicação utiliza [Pest PHP](https://pestphp.com) para garantir a qualidade do código, cobrindo:
+*   **Segurança:** Autenticação e proteção de rotas.
+*   **Integridade:** Lógica de criação de logs em transições de status.
+*   **Permissões:** Validação rigorosa via Policies.
