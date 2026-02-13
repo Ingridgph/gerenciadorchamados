@@ -2,7 +2,7 @@
 
 use App\Models\Chamado;
 
-test('não deve permitir acessar tickets sem autenticação', function () {
+test('não deve permitir editar status tickets sem autenticação', function () {
     $chamado = Chamado::factory()->create();
     $data = [
         'status' => 'resolvido',
@@ -11,7 +11,7 @@ test('não deve permitir acessar tickets sem autenticação', function () {
     $response->assertStatus(401);
 });
 
-test('Deve permitir acessar tickets com autenticação', function () {
+test('Deve permitir editar status tickets com autenticação', function () {
     $this->authenticated();
     $chamado = Chamado::factory()->create([
         'status' => 'aberto',
