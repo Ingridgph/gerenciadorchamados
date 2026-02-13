@@ -21,6 +21,14 @@ class ChamadoService
             ->when($request->status, fn ($q, $status) => $q->where('status', $status)
             )
             ->when($request->prioridade, fn ($q, $prioridade) => $q->where('prioridade', $prioridade)
+            )->when(
+                $request->search,
+                function ($q, $search) {
+                    $q->where(function ($sub) use ($search) {
+                        $sub->where('titulo', 'like', "%{$search}%")
+                            ->orWhere('descricao', 'like', "%{$search}%");
+                    });
+                }
             )
             ->paginate(10);
 

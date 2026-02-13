@@ -13,11 +13,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    Route::get('/chamados', [ChamadoController::class, 'index']);
-    Route::get('/chamados/{id}', [ChamadoController::class, 'show']);
-    Route::post('/chamados', [ChamadoController::class, 'store']);
-    Route::patch('/chamados/{id}', [ChamadoController::class, 'updateStatus']);
-    Route::delete('/chamados/{id}', [ChamadoController::class, 'destroy']);
+    Route::get('/tickets', [ChamadoController::class, 'index']);
+    Route::get('/tickets/{id}', [ChamadoController::class, 'show']);
+    Route::post('/tickets', [ChamadoController::class, 'store']);
+    Route::patch('/tickets/{id}', [ChamadoController::class, 'updateStatus']);
+    Route::delete('/tickets/{id}', [ChamadoController::class, 'destroy']);
 });
 
 Route::prefix('auth')->group(base_path('routes/auth.php'));
