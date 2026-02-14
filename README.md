@@ -1,86 +1,121 @@
-# 🐞 Teste Técnico Laravel – Gestão de Chamados
+# Gerenciador de Chamados
 
-Este projeto é uma aplicação de **Gestão de Chamados (Tickets)** desenvolvida para avaliar competências em Laravel 12, arquitetura de software e boas práticas.
+Aplicação Laravel para gerenciamento de chamados (tickets), rodando em Docker, com autenticação e interface moderna estilizada com Tailwind CSS.
 
----
+## 🚀 Funcionalidades
 
-## 💻 Stack Tecnológica
+-   **Autenticação**: Login e Logout.
+-   **Gerenciamento de Chamados**:
+    -   Criar novo chamado.
+    -   Listar chamados com paginação.
+    -   **Filtrar** por status (Aberto, Em Andamento, Resolvido) e prioridade (Baixa, Média, Alta).
+    -   **Buscar** por título ou descrição.
+    -   Ver detalhes do chamado e **atualizar status**.
+    -   **Excluir** chamados.
+-   **Design**: Interface limpa e responsiva.
 
-*   **Framework:** Laravel 12+
-*   **Banco de Dados:** SQLite
-*   **Autenticação:** Laravel Breeze (Session) & Sanctum (API)
-*   **Testes:** Pest PHP
-*   **Container:** Docker (Docker Compose)
+## 🛠️ Tecnologias
 
----
-
-## ✨ Funcionalidades
-
-*   🔑 **Autenticação:** Acesso restrito a usuários autenticados.
-*   📄 **CRUD de Chamados:** Gerenciamento completo de tickets.
-*   🔍 **Filtros e Busca:** Filtragem por status/prioridade e busca por texto.
-*   ⚡ **Status Inteligente:** Preenchimento automático de `resolved_at` e geração de logs.
-*   🛡️ **Segurança:** Regras de exclusão restritas ao solicitante ou administrador.
-*   📝 **Auditoria:** Histórico detalhado de alterações de status (`ticket_logs`).
+-   [Laravel 11](https://laravel.com)
+-   [Docker](https://www.docker.com) & Docker Compose
+-   [Tailwind CSS](https://tailwindcss.com) & [Vite](https://vitejs.dev)
+-   SQLite 
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## ⚙️ Instalação e Execução
 
-### 🐳 Via Docker (Recomendado)
+Siga os passos abaixo para rodar o projeto do zero usando Docker.
+
+### 1. Pré-requisitos
+
+Certifique-se de ter o **Docker** e o **Docker Compose** instalados na sua máquina.
+
+### 2. Configuração Inicial
+
+Clone o repositório e entre na pasta:
 
 ```bash
-# Build e sobe os containers
-docker-compose up -d --build
+cd gerenciadorchamados
+```
 
-# Acessa o container da aplicação
+Crie o arquivo `.env`:
+
+```bash
+# Windows (Powershell)
+Copy-Item .env.example .env
+
+# Linux/Mac
+cp .env.example .env
+```
+
+### 3. Subir os Containers
+
+Este comando irá criar as imagens (incluindo a instalação do PHP, Composer e Node.js) e iniciar os containers em segundo plano.
+
+```bash
+docker-compose up -d --build
+```
+
+> **Nota:** A primeira execução pode demorar alguns minutos pois estará instalando todas as dependências do Laravel e do Frontend dentro do container.
+
+### 4. Configurar a Aplicação
+
+Execute os comandos abaixo para gerar a chave da aplicação e criar as tabelas no banco de dados.
+
+```bash
+# Entrar no terminal do container
 docker exec -it gerenciadorchamados-app-1 bash
 
-# Configuração interna
-touch database/database.sqlite
+# --- DENTRO DO CONTAINER ---
+
+# 1. Instalar dependências do PHP (se não foram instaladas no build)
 composer install
-php artisan migrate --seed
-php artisan test
+
+# 2. Instalar dependencias do frontend 
+npm install 
+npm run build
+
+# 3. Gerar chave única da aplicação
 php artisan key:generate
 
-## 🌐 URL de Acesso
-Acesse a aplicação em: [http://localhost:8080](http://localhost:8080)
+# 4. Criar o arquivo do banco de dados (SQLite)
+touch database/database.sqlite
+
+# 5. Rodar as migrações e seeds (cria tabelas e usuários padrão)
+php artisan migrate --seed
+
+# 6. Definir permissões (caso haja erros de "Permission denied")
+chown -R www-data:www-data /var/www/storage /var/www/database
+
+# 7. Sair do container
+exit
+```
+
+### 5. Frontend Assets (CSS/JS)
+
+O `Dockerfile` já está configurado para instalar e buildar os assets automaticamente. Caso a estilização não apareça, você pode forçar a reconstrução:
+
+```bash
+docker exec gerenciadorchamados-app-1 npm run build
+```
 
 ---
 
-## 🔑 Endpoints da API
+## 🖥️ Acessando a Aplicação
 
-| Método   | Rota                     | Descrição                  |
-| :---     | :---                     | :---                       |
-| `GET`    | /api/tickets             | Lista tickets com filtros  |
-| `GET`    | /api/tickets/{id}        | Detalhes de um ticket      |
-| `POST`   | /api/tickets             | Criação de novo chamado    |
-| `PATCH`  | /api/tickets/{id}/status | Atualiza status e gera log |
-| `DELETE` | /api/tickets/{id}        | Exclusão (Soft Delete)     |
+Acesse no seu navegador:
 
----
+👉 **http://localhost:8080**
 
-## 🛡️ Regras de Negócio
+### Login
 
-*   ✅ **Fechamento:** Ao mudar status para `RESOLVIDO`, o campo `resolved_at` é preenchido na hora.
-*   ✅ **Auditoria:** Toda mudança de status (ex: `ABERTO` -> `EM_ANDAMENTO`) gera um registro de log.
-*   ✅ **Privacidade:** Um usuário comum não pode excluir chamados de terceiros.
-*   ✅ **Persistência:** Uso de Soft Deletes para evitar perda acidental de dados.
+Admin:
+-   **Email:** `admin@test.com`
+-   **Senha:** `Password123`
+
+User:
+-   **Email:** `user@test.com`
+-   **Senha:** `Password123`
 
 ---
-
-## 🧪 Usuários de Teste
-
-| Perfil    | E-mail         | Senha       |
-| :---      | :---           | :---        |
-| **Admin** | admin@test.com | Password123 |
-| **Comum** | user@test.com  | Password123 |
-
----
-
-## 🧪 Testes Automatizados
-
-A aplicação utiliza [Pest PHP](https://pestphp.com) para garantir a qualidade do código, cobrindo:
-*   **Segurança:** Autenticação e proteção de rotas.
-*   **Integridade:** Lógica de criação de logs em transições de status.
-*   **Permissões:** Validação rigorosa via Policies.
