@@ -7,15 +7,7 @@ use App\Models\User;
 
 class ChamadoPolicy
 {
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    public function delete(User $user, Chamado $chamado)
+    public function delete(User $user, Chamado $chamado): bool
     {
         return (bool) $user->admin;
     }
