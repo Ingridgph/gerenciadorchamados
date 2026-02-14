@@ -3,15 +3,19 @@
 use App\Models\Chamado;
 
 test('não deve permitir acessar tickets sem autenticação', function () {
-    $response = $this->getJson('/api/tickets');
-    $response->assertStatus(401);
+    $response = $this->get('/chamados');
+    $response->assertStatus(302);
+    $response->assertRedirect(route('login'));
 });
 
 test('Deve permitir acessar tickets com autenticação', function () {
     $this->authenticated();
     Chamado::factory()->count(5)->create();
 
-    $response = $this->getJson('/api/tickets');
+    $response = $this->get('/chamados');
     $response->assertStatus(200);
-    $this->assertCount(5, $response->json('data'));
+    $response->assertViewHas('chamados', function ($chamados) {
+        return $chamados->count() === 5;
+    });
+
 });

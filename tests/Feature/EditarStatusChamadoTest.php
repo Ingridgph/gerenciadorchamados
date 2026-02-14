@@ -7,8 +7,9 @@ test('não deve permitir editar status tickets sem autenticação', function () 
     $data = [
         'status' => 'resolvido',
     ];
-    $response = $this->patchJson("/api/tickets/$chamado->id", $data);
-    $response->assertStatus(401);
+    $response = $this->patch("/chamados/$chamado->id/status", $data);
+    $response->assertStatus(302);
+    $response->assertRedirect('/');
 });
 
 test('Deve permitir editar status tickets com autenticação', function () {
@@ -19,8 +20,9 @@ test('Deve permitir editar status tickets com autenticação', function () {
     $data = [
         'status' => 'resolvido',
     ];
-    $response = $this->patchJson("/api/tickets/$chamado->id", $data);
-    $response->assertStatus(200);
+    $response = $this->patch("/chamados/$chamado->id/status", $data);
+    $response->assertStatus(302);
+    $response->assertRedirect(route('chamados.index'));
 
     $chamado->refresh();
     $this->assertEquals('resolvido', $chamado->status->value);
