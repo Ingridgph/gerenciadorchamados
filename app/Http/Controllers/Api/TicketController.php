@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChamadoCreateRequest;
 use App\Http\Requests\ChamadoUpdateStatusRequest;
 use App\Http\Requests\ListChamadoRequest;
+use App\Http\Resources\ChamadoResource;
 use App\Models\Chamado;
 use App\Services\ChamadoService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TicketController extends Controller
 {
@@ -19,9 +20,9 @@ class TicketController extends Controller
         private readonly ChamadoService $service,
     ) {}
 
-    public function index(ListChamadoRequest $request)
+    public function index(ListChamadoRequest $request): AnonymousResourceCollection
     {
-        $chamados = Chamado::with('solicitante')
+        $chamados = Chamado::with('solicitante', 'responsavel', 'latestLog')
             ->when($request->validated('search'), function ($q, $search) {
                 $q->where(function ($sub) use ($search) {
                     $sub->where('titulo', 'like', "%{$search}%")
@@ -31,36 +32,30 @@ class TicketController extends Controller
             ->when($request->validated('status'), fn ($q, $status) => $q->where('status', $status))
             ->when($request->validated('prioridade'), fn ($q, $prioridade) => $q->where('prioridade', $prioridade))
             ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
-        return view('chamados.index', compact('chamados'));
+        return ChamadoResource::collection($chamados);
     }
 
-    public function create()
+    public function show(Chamado $chamado): ChamadoResource
     {
-        return view('chamados.create');
+        $chamado->load('solicitante', 'responsavel', 'latestLog');
+
+        return ChamadoResource::make($chamado);
     }
 
-    public function store(ChamadoCreateRequest $request)
+    public function store(ChamadoCreateRequest $request): ChamadoResource
     {
-        $this->service->create($request);
+        $chamado = $this->service->create($request);
 
-        return redirect()->route('chamados.index')->with('success', 'Chamado criado com sucesso!');
+        return ChamadoResource::make($chamado->load('solicitante'));
     }
 
-    public function show(Chamado $chamado)
+    public function updateStatus(ChamadoUpdateStatusRequest $request, Chamado $chamado): ChamadoResource
     {
-        $chamado->load('solicitante', 'responsavel', 'logs.user');
+        $chamado = $this->service->updateStatus($request, $chamado);
 
-        return view('chamados.show', compact('chamado'));
-    }
-
-    public function updateStatus(ChamadoUpdateStatusRequest $request, Chamado $chamado)
-    {
-        $this->service->updateStatus($request, $chamado);
-
-        return redirect()->route('chamados.show', $chamado)->with('success', 'Status atualizado com sucesso!');
+        return ChamadoResource::make($chamado->load('solicitante', 'responsavel'));
     }
 
     public function destroy(Chamado $chamado)
@@ -69,6 +64,6 @@ class TicketController extends Controller
 
         $chamado->delete();
 
-        return redirect()->route('chamados.index')->with('success', 'Chamado excluido com sucesso!');
+        return response()->json(null, 204);
     }
 }

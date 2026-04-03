@@ -17,13 +17,13 @@ abstract class TestCase extends BaseTestCase
     {
         $this->user = User::factory()->admin()->create();
 
-        return $this->actingAs($this->user, 'sanctum'); // API
+        return $this->actingAs($this->user);
     }
 
     public function authenticated(): self
     {
         $this->user = User::factory()->create();
 
-        return $this->actingAs($this->user, 'sanctum'); // API
+        return $this->actingAs($this->user);
     }
 }

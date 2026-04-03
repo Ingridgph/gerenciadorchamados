@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('chamados.index', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

@@ -44,6 +44,11 @@ class Chamado extends Model
         return $this->belongsTo(User::class, 'responsavel_id');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(ChamadoLog::class, 'chamado_id')->latest();
+    }
+
     public function latestLog()
     {
         return $this->hasOne(ChamadoLog::class, 'chamado_id')->latestOfMany();
