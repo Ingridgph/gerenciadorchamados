@@ -26,14 +26,16 @@ COPY . /var/www
 
 RUN chown -R www-data:www-data /var/www
 
-# Install dependencies and build assets
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# Pre-install dependencies (entrypoint will handle dev volume override)
+RUN composer install --no-interaction --optimize-autoloader
 RUN npm install && npm run build
 
 RUN chown -R www-data:www-data /var/www
 
 COPY nginx.conf /etc/nginx/sites-available/default
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 
-CMD service nginx start && php-fpm
+ENTRYPOINT ["docker-entrypoint.sh"]
